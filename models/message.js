@@ -21,6 +21,10 @@ const Message = sequelize.define('message', {
       key: 'id'
     }
   },
+  sender_name: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
   content: {
     type: DataTypes.TEXT,
     allowNull: false
