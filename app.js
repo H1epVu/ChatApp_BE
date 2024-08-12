@@ -6,12 +6,14 @@ const User = require('./models/user');
 const Conversation = require('./models/conversation');
 const Message = require('./models/message');
 const Participant = require('./models/participant');
+const Friend = require('./models/friend');
 
 require('dotenv').config()
 
 const userRouters = require('./routers/user')
 const convRouters = require('./routers/conversation')
 const messRouters = require('./routers/message')
+const friendRouters = require('./routers/friend')
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -30,6 +32,7 @@ app.use((req, res, next) => {
 app.use('/user', userRouters)
 app.use('/conv', convRouters)
 app.use('/mess', messRouters)
+app.use('/friend', friendRouters)
 
 
 User.hasMany(Message, { foreignKey: 'sender_id' });
@@ -43,6 +46,12 @@ Participant.belongsTo(Conversation, { foreignKey: 'conversation_id' });
 
 User.hasMany(Participant, { foreignKey: 'user_id' });
 Participant.belongsTo(User, { foreignKey: 'user_id' });
+
+User.hasMany(Friend, { foreignKey: 'user_id', as: 'sentRequests' });
+User.hasMany(Friend, { foreignKey: 'friend_id', as: 'receivedRequests' });
+
+Friend.belongsTo(User, { foreignKey: 'user_id', as: 'requester' });
+Friend.belongsTo(User, { foreignKey: 'friend_id', as: 'receiver' });
 
 sequelize.sync().then(result => {
   app.listen(port, () => {
